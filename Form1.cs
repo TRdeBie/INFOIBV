@@ -64,13 +64,9 @@ namespace INFOIBV
             int width = InputImage.Size.Width;
             int height = InputImage.Size.Height;
             Image = ImageManipulation.ImageToGreyscale(Image, width, height);
-            progressBar.PerformStep();
             Image = ImageManipulation.ImageEqualizeHistogram(Image, width, height);
-            progressBar.PerformStep();
             Image = ImageManipulation.ImageSharpening(Image, width, height);
-            //Image = ImageStretchContrast(Image, (int)numUpDownLowerBound.Value, 20, (int)numUpDownUpperBound.Value, 235);
-            //Image = ImageWindowing(Image, (int)numUpDownLowerBound.Value, (int)numUpDownUpperBound.Value);
-            //Image = ImageNegative(Image);
+            //Image = ImageManipulation.ImageEqualizeHistogram(Image, width, height);
 
             // Copy array to output Bitmap
             for (int x = 0; x < InputImage.Size.Width; x++)

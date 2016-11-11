@@ -143,20 +143,8 @@ namespace INFOIBV {
         /// <param name="Image"></param>
         /// <returns></returns>
         public static Color[,] ImageSharpening(Color[,] Image, int width, int height) {
-            int kernelWidth = 3;
-            int kernelHeight = 3;
-            double[,] kernel = new double[kernelWidth, kernelHeight];
-            for (int x = 0; x < kernelWidth; x++) {
-                for (int y = 0; y < kernelHeight; y++) {
-                    kernel[x, y] = -1;
-                    if (x == (kernelWidth - 1) / 2) {
-                        if (y == (kernelHeight - 1) / 2) {
-                            kernel[x, y] = 9;
-                        }
-                    }
-                }
-            }
-            return ImageApplyKernel(Image, width, height, kernel, kernelWidth, kernelHeight);
+            double[,] kernel = new double[,] { { -1, -1, -1 }, { -1, 9, -1 }, { -1, -1, -1 } };
+            return ImageApplyKernel(Image, width, height, kernel, 3, 3);
         }
         /// <summary>
         /// Applies a given kernel to the image
