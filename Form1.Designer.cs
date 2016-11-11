@@ -135,7 +135,7 @@
             this.numUpDownLowerBound.Size = new System.Drawing.Size(97, 20);
             this.numUpDownLowerBound.TabIndex = 7;
             this.numUpDownLowerBound.Value = new decimal(new int[] {
-            100,
+            240,
             0,
             0,
             0});
@@ -152,7 +152,7 @@
             this.numUpDownUpperBound.Size = new System.Drawing.Size(97, 20);
             this.numUpDownUpperBound.TabIndex = 8;
             this.numUpDownUpperBound.Value = new decimal(new int[] {
-            200,
+            250,
             0,
             0,
             0});
