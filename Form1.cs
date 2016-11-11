@@ -64,6 +64,8 @@ namespace INFOIBV
             Image = ImageToGreyscale(Image);
             progressBar.Value = 1;
             Image = ImageEqualizeHistogram(Image);
+            progressBar.Value = 1;
+            Image = ImageSharpening(Image);
             //Image = ImageStretchContrast(Image, (int)numUpDownLowerBound.Value, 20, (int)numUpDownUpperBound.Value, 235);
             //Image = ImageWindowing(Image, (int)numUpDownLowerBound.Value, (int)numUpDownUpperBound.Value);
             //Image = ImageNegative(Image);
@@ -220,6 +222,58 @@ namespace INFOIBV
                 }
             }
             return histogram;
+        }
+        /// <summary>
+        /// Applies a kernel to sharpen the image
+        /// </summary>
+        /// <param name="Image"></param>
+        /// <returns></returns>
+        private Color[,] ImageSharpening(Color[,] Image) {
+            int kernelWidth = 3;
+            int kernelHeight = 3;
+            double[,] kernel = new double[kernelWidth, kernelHeight];
+            for (int x = 0; x < kernelWidth; x++) {
+                for (int y = 0; y<kernelHeight; y++) {
+                    kernel[x, y] = -1;
+                    if (x == (kernelWidth - 1) / 2) {
+                        if (y == (kernelHeight - 1) / 2) {
+                            kernel[x, y] = 9;
+                        }
+                    }
+                }
+            }
+            return ImageApplyKernel(Image, kernel, kernelWidth, kernelHeight);
+        }
+        /// <summary>
+        /// Applies a given kernel to the image
+        /// </summary>
+        /// <param name="Image"></param>
+        /// <param name="kernel">Kernel, odd x odd in size so that the center one is the sampler</param>
+        /// <returns></returns>
+        private Color[,] ImageApplyKernel(Color[,] Image, double[,] kernel, int kernelWidth, int kernelHeight) {
+            Color[,] newImage = new Color[InputImage.Size.Width, InputImage.Size.Height];
+            int kernelCenterX = kernelWidth / 2;
+            int kernelCenterY = kernelHeight / 2;
+            for (int x = 0; x < InputImage.Size.Width; x++) {
+                for (int y = 0; y < InputImage.Size.Height; y++) {
+                    double sum = 0;
+                    int count = 0;
+                    for (int kx = -kernelCenterX; kx < -kernelCenterX + kernelWidth; kx++) {
+                        for (int ky = -kernelCenterY; ky < -kernelCenterY + kernelHeight; ky++) {
+                            if (x + kx >= 0 && x + kx < InputImage.Size.Width) {
+                                if (y + ky >= 0 && y + ky < InputImage.Size.Height) {
+                                    sum += Image[x + kx, y + ky].R * kernel[kx + kernelCenterX, ky + kernelCenterY];
+                                    count++;
+                                }
+                            }
+                        }
+                    }
+                    int newValue = Math.Min(Math.Max((int)(sum / count), 0), 255);
+                    newImage[x, y] = Color.FromArgb(255, newValue, newValue, newValue);
+                    progressBar.PerformStep();
+                }
+            }
+            return newImage;
         }
     }
 }
