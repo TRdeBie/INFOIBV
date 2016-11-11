@@ -43,12 +43,12 @@ namespace INFOIBV
             if (InputImage == null) return;                                 // Get out if no input image
             if (OutputImage != null) OutputImage.Dispose();                 // Reset output image
             OutputImage = new Bitmap(InputImage.Size.Width, InputImage.Size.Height); // Create new output image
-            Color[,] Image = new Color[InputImage.Size.Width, InputImage.Size.Height]; // Create array to speed-up operations (Bitmap functions are very slow)
+            Color[,] image = new Color[InputImage.Size.Width, InputImage.Size.Height]; // Create array to speed-up operations (Bitmap functions are very slow)
 
             // Setup progress bar
             progressBar.Visible = true;
             progressBar.Minimum = 1;
-            progressBar.Maximum = 3;
+            progressBar.Maximum = InputImage.Size.Width * InputImage.Size.Height;
             progressBar.Value = 1;
             progressBar.Step = 1;
 
@@ -57,23 +57,22 @@ namespace INFOIBV
             {
                 for (int y = 0; y < InputImage.Size.Height; y++)
                 {
-                    Image[x, y] = InputImage.GetPixel(x, y);                // Set pixel color in array at (x,y)
+                    image[x, y] = InputImage.GetPixel(x, y);                // Set pixel color in array at (x,y)
                 }
             }
 
             int width = InputImage.Size.Width;
             int height = InputImage.Size.Height;
-            Image = ImageManipulation.ImageToGreyscale(Image, width, height);
-            Image = ImageManipulation.ImageEqualizeHistogram(Image, width, height);
-            Image = ImageManipulation.ImageSharpening(Image, width, height);
-            //Image = ImageManipulation.ImageEqualizeHistogram(Image, width, height);
-
+            image = ImageManipulation.ImageToGreyscale(image, width, height);
+            image = ImageManipulation.ImageDetectEdgesPrewitt(image, width, height);
+            image = ImageManipulation.ImageEqualizeHistogram(image, width, height);
+            image = ImageManipulation.ImageWindowing(image, width, height, (int)numUpDownLowerBound.Value, (int)numUpDownUpperBound.Value);
             // Copy array to output Bitmap
             for (int x = 0; x < InputImage.Size.Width; x++)
             {
                 for (int y = 0; y < InputImage.Size.Height; y++)
                 {
-                    OutputImage.SetPixel(x, y, Image[x, y]);               // Set the pixel color at coordinate (x,y)
+                    OutputImage.SetPixel(x, y, image[x, y]);               // Set the pixel color at coordinate (x,y)
                 }
             }
             
