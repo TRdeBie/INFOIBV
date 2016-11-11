@@ -188,5 +188,94 @@ namespace INFOIBV {
             }
             return newImage;
         }
+
+        // Thresholding
+        public static Color[,] ApplyThreshold(Color[,] Image, int width, int height, int thresholdValue)
+        {
+            Color[,] newImage = new Color[width, height];
+            // Convert image to black and white based on average brightness
+            for (int y = 0; y < height; y++){
+                for (int x = 0; x < width; x++){
+                    // Set this pixel to black or white based on threshold
+                    int pixelValue = (int)(Image[x, y].GetBrightness() * 255);
+                    if (pixelValue >= thresholdValue)
+                        newImage[x, y] = Color.White;
+                    else
+                        newImage[x, y] = Color.Black;
+                }
+            }
+            return newImage;
+        }
+
+        //Erosion
+        public static Color[,] ApplyErosion(Color[,] Image, int width, int height)
+        {
+            Color[,] newImage = new Color[width, height];
+            Color pixelValueAbove, pixelValueBelow, pixelValueLeft, pixelValueRight;
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    if (y - 1 > 0)
+                        pixelValueAbove = Image[x, y - 1];
+                    else
+                        pixelValueAbove = Color.Purple;
+                    if (y + 1 < height)
+                        pixelValueBelow = Image[x, y + 1];
+                    else
+                        pixelValueBelow = Color.Purple;
+                    if (x - 1 < width)
+                        pixelValueLeft = Image[x - 1, y];
+                    else
+                        pixelValueLeft = Color.Purple;
+                    if (x + 1 > 0)
+                        pixelValueRight = Image[x + 1, y];
+                    else
+                        pixelValueRight = Color.Purple;
+
+                    if (pixelValueAbove == Color.Black || pixelValueBelow == Color.Black || pixelValueLeft == Color.Black || pixelValueRight == Color.Black)
+                        newImage[x, y] = Color.Black;
+                    else
+                        newImage[x, y] = Color.White;
+                }
+            }
+            return newImage;
+        }
+
+        //Dilation
+        public static Color[,] ApplyDilation(Color[,] Image, int width, int height)
+        {
+            Color[,] newImage = new Color[width, height];
+            Color pixelValueAbove, pixelValueBelow, pixelValueLeft, pixelValueRight;
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    // Set this pixel to black or white based on threshold
+                    if (y - 1 > 0)
+                        pixelValueAbove = Image[x, y - 1];
+                    else
+                        pixelValueAbove = Color.Purple;
+                    if (y + 1 < height)
+                        pixelValueBelow = Image[x, y + 1];
+                    else
+                        pixelValueBelow = Color.Purple;
+                    if (x - 1 < width)
+                        pixelValueLeft = Image[x - 1, y];
+                    else
+                        pixelValueLeft = Color.Purple;
+                    if (x + 1 > 0)
+                        pixelValueRight = Image[x + 1, y];
+                    else
+                        pixelValueRight = Color.Purple;
+
+                    if (pixelValueAbove == Color.White || pixelValueBelow == Color.White || pixelValueLeft == Color.White || pixelValueRight == Color.White)
+                        newImage[x, y] = Color.White;
+                    else
+                        newImage[x, y] = Color.Black;
+                }
+            }
+            return newImage;
+        }
     }
 }
