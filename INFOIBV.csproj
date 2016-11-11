@@ -52,7 +52,9 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="ImageManipulation.cs" />
+    <Compile Include="D:\Documenten\UU Marijn\Jaar 3\Beeldverwerking\BackUp\ImageManipulation.cs">
+      <Link>ImageManipulation.cs</Link>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
