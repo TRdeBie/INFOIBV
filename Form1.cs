@@ -73,6 +73,9 @@ namespace INFOIBV
             image = ImageManipulation.ImageEqualizeHistogram(image, width, height);
             image = ImageManipulation.ImageThresholding(image, width, height, (int)numUpDownLowerBound.Value, (int)numUpDownUpperBound.Value);
             */
+
+            int objects = DetectObjects(image, width, height);
+            MessageBox.Show(objects + " objects have been detected.");
             // Copy array to output Bitmap
             for (int x = 0; x < InputImage.Size.Width; x++)
             {
