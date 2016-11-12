@@ -23,15 +23,23 @@ namespace INFOIBV
             }
             return image;
         }
-
+        /// <summary>
+        /// Considers only the R value
+        /// Retains the R value of the pixels within the window
+        /// </summary>
+        /// <param name="image"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="lowerBound"></param>
+        /// <param name="upperBound"></param>
+        /// <returns></returns>
         public static Color[,] ImageWindowing(Color[,] image, int width, int height, int lowerBound, int upperBound)
         {
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)
                 {
-                    Color pixelColor = image[x, y];                             // Get the pixel color at coordinate (x,y)
-                    int bright = (int)(pixelColor.GetBrightness() * 255);       // Get the brightness of the color [0-1] and convert it to [0-225]
+                    int bright = image[x, y].R;
                     Color updatedColor = new Color();
                     if (bright < lowerBound)
                         updatedColor = Color.Black;                             // Colours below the lower bound are set to pure black
@@ -40,6 +48,19 @@ namespace INFOIBV
                     else
                         updatedColor = Color.FromArgb(bright, bright, bright);  // Colours in the window are converted to greyscale
                     image[x, y] = updatedColor;                                 // Set the new pixel color at coordinate (x,y)
+                }
+            }
+            return image;
+        }
+        public static Color[,] ImageThresholding(Color[,] image, int width, int height, int lowerBound, int upperBound) {
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < height; y++) {
+                    int bright = image[x, y].R;
+                    Color updatedColor = Color.Black;
+                    if (bright >= lowerBound && bright <= upperBound) {
+                        updatedColor = Color.White;
+                    }
+                    image[x, y] = updatedColor;
                 }
             }
             return image;
@@ -304,7 +325,22 @@ namespace INFOIBV
         /// <param name="height"></param>
         /// <returns></returns>
         public static Color[,] ImageDetectLines(Color[,] image, int width, int height) {
-            return image;
+            double[,] k1 = new double[,] { { -1.0, 2.0, -1.0 }, { -1.0, 2.0, -1.0 }, { -1.0, 2.0, -1.0 } };
+            double[,] k2 = new double[,] { { -1.0, -1.0, 2.0 }, { -1.0, 2.0, -1.0 }, { 2.0, -1.0, -1.0 } };
+            double[,] k3 = new double[,] { { -1.0, -1.0, -1.0 }, { 2.0, 2.0, 2.0 }, { -1.0, -1.0, -1.0 } };
+            double[,] k4 = new double[,] { { 2.0, -1.0, -1.0 }, { -1.0, 2.0, -1.0 }, { -1.0, -1.0, 2.0 } };
+            double[,] horizontal = ProcessingKernel(image, width, height, k1, 3, 3);
+            double[,] diagonal1 = ProcessingKernel(image, width, height, k2, 3, 3);
+            double[,] vertical = ProcessingKernel(image, width, height, k3, 3, 3);
+            double[,] diagonal2 = ProcessingKernel(image, width, height, k4, 3, 3);
+            Color[,] newImage = new Color[width, height];
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < height; y++) {
+                    int result = (int)Math.Max(Math.Max(horizontal[x, y], vertical[x, y]), Math.Max(diagonal1[x, y], diagonal2[x, y]));
+                    newImage[x, y] = Color.FromArgb(255, result, result, result);
+                }
+            }
+            return newImage;
         }
         /// <summary>
         /// Takes an image, and applies a kernel to it.
@@ -334,6 +370,75 @@ namespace INFOIBV
                         }
                     }
                     newImage[x, y] = Math.Min(Math.Max((sum / count), 0), 255);
+                }
+            }
+            return newImage;
+        }/// <summary>
+        /// Calculates saddle points using derivatives
+        /// </summary>
+        /// <param name="image"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <returns></returns>
+        public static Color[,] ImageSaddlePoints(Color[,] image, int width, int height) {
+            double[,] imageDouble = new double[width, height];
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y<height; y++) {
+                    imageDouble[x, y] = image[x, y].R;
+                }
+            }
+            double[,] firstOrderHorizontal = ProcessingDerivativeHorizontal(imageDouble, width, height);
+            double[,] firstOrderVertical = ProcessingDerivativeVertical(imageDouble, width, height);
+            double[,] secondOrderHorizontal = ProcessingDerivativeHorizontal(firstOrderHorizontal, width, height);
+            double[,] secondOrderVertical = ProcessingDerivativeVertical(firstOrderVertical, width, height);
+            double[,] secondOrderCross = ProcessingDerivativeVertical(firstOrderHorizontal, width, height);
+            Color[,] stationaries = new Color[width, height];
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y<height; y++) {
+                    double hamiltonian = secondOrderHorizontal[x, y] * secondOrderVertical[x, y] - Math.Pow(secondOrderCross[x, y], 2);
+                    int newValue = (int)Math.Max(Math.Min(255 * hamiltonian + 255 / 2.0, 255), 0);
+                    stationaries[x, y] = Color.FromArgb(255, newValue, newValue, newValue);
+                }
+            }
+            return stationaries;
+        }
+        public static double[,] ProcessingDerivativeVertical(double[,] image, int width, int height) {
+            double[,] kernel = new double[1, 5] { { 1 / 12.0, -8 / 12.0, 0, 8 / 12.0, -1 / 12.0 } };
+            return ProcessingDerivative(image, width, height, kernel, 1, 5);
+        }
+        public static double[,] ProcessingDerivativeHorizontal(double[,] image, int width, int height) {
+            double[,] kernel = new double[5, 1] { { 1 / 12.0 }, { -8 / 12.0 }, { 0.0 }, { 8 / 12.0 }, { -1 / 12.0 } };
+            return ProcessingDerivative(image, width, height, kernel, 5, 1);
+        }
+        /// <summary>
+        /// General application for approximating a derivative over an image
+        /// </summary>
+        /// <param name="image"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="kernel"></param>
+        /// <param name="kWidth"></param>
+        /// <param name="kHeight"></param>
+        /// <returns></returns>
+        public static double[,] ProcessingDerivative(double[,] image, int width, int height, double[,] kernel, int kWidth, int kHeight) {
+            int kernelCenterX = (int)Math.Floor(kWidth / 2.0);
+            int kernelCenterY = (int)Math.Floor(kHeight / 2.0);
+            double[,] newImage = new double[width, height];
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < height; y++) {
+                    double sum = 0.0;
+                    int count = 0;
+                    for (int xk = 0 - kernelCenterX; xk < kWidth - kernelCenterX; xk++) {
+                        if (x + xk >= 0 && x + xk < width) {
+                            for (int yk = 0 - kernelCenterY; yk < kHeight - kernelCenterY; yk++) {
+                                if (y + yk >= 0 && y + yk < height) {
+                                    sum += image[x + xk, y + yk] * kernel[xk + kWidth / 2, yk + kHeight / 2];
+                                    count++;
+                                }
+                            }
+                        }
+                    }
+                    newImage[x, y] = sum / count;
                 }
             }
             return newImage;
@@ -367,7 +472,7 @@ namespace INFOIBV
             {
                 for (int x = 0; x < width; x++)
                 {
-                    if (y - 1 > 0)
+                    if (y - 1 >= 0)
                         pixelValueAbove = Image[x, y - 1];
                     else
                         pixelValueAbove = Color.Purple;
@@ -375,11 +480,11 @@ namespace INFOIBV
                         pixelValueBelow = Image[x, y + 1];
                     else
                         pixelValueBelow = Color.Purple;
-                    if (x - 1 < width)
+                    if (x - 1 >= 0)
                         pixelValueLeft = Image[x - 1, y];
                     else
                         pixelValueLeft = Color.Purple;
-                    if (x + 1 > 0)
+                    if (x + 1 < width)
                         pixelValueRight = Image[x + 1, y];
                     else
                         pixelValueRight = Color.Purple;
@@ -403,7 +508,7 @@ namespace INFOIBV
                 for (int x = 0; x < width; x++)
                 {
                     // Set this pixel to black or white based on threshold
-                    if (y - 1 > 0)
+                    if (y - 1 >= 0)
                         pixelValueAbove = Image[x, y - 1];
                     else
                         pixelValueAbove = Color.Purple;
@@ -411,11 +516,11 @@ namespace INFOIBV
                         pixelValueBelow = Image[x, y + 1];
                     else
                         pixelValueBelow = Color.Purple;
-                    if (x - 1 < width)
+                    if (x - 1 >= 0)
                         pixelValueLeft = Image[x - 1, y];
                     else
                         pixelValueLeft = Color.Purple;
-                    if (x + 1 > 0)
+                    if (x + 1 < width)
                         pixelValueRight = Image[x + 1, y];
                     else
                         pixelValueRight = Color.Purple;
