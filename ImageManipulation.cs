@@ -263,6 +263,16 @@ namespace INFOIBV
             double[,] k2 = new double[,] { { -1.0, 0.0, 1.0 }, { -1.0, 0.0, 1.0 }, { -1.0, 0.0, 1.0 } };
             return ImageDetectEdges(image, width, height, k1, k2);
         }
+        public static Color[,] ImageDetectEdgesApprox(Color[,] image, int width, int height) {
+            double[,] k1 = new double[,] { { 0.0, -1.0, 0.0 }, { 0.0, 0.0, 0.0 }, { 0.0, 1.0, 0.0 } };
+            double[,] k2 = new double[,] { { 0.0, 0.0, 0.0 }, { -1.0, 0.0, 1.0 }, { 0.0, 0.0, 0.0 } };
+            return ImageDetectEdges(image, width, height, k1, k2);
+        }
+        public static Color[,] ImageDetectEdgesSobel(Color[,] image, int width, int height) {
+            double[,] k1 = new double[,] { { -1.0, -2.0, -1.0 }, { 0.0, 0.0, 0.0 }, { 1.0, 2.0, 1.0 } };
+            double[,] k2 = new double[,] { { -1.0, 0.0, 1.0 }, { -2.0, 0.0, 2.0 }, { -1.0, 0.0, 1.0 } };
+            return ImageDetectEdges(image, width, height, k1, k2);
+        }
         /// <summary>
         /// Detect edges via specified kernels
         /// </summary>

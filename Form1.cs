@@ -64,7 +64,10 @@ namespace INFOIBV
             int width = InputImage.Size.Width;
             int height = InputImage.Size.Height;
             image = ImageManipulation.ImageToGreyscale(image, width, height);
-            image = ImageManipulation.ImageDetectEdgesPrewitt(image, width, height);
+            if (radioButton1.Checked) image = ImageManipulation.ImageDetectEdgesApprox(image, width, height);
+            else if (radioButton2.Checked) image = ImageManipulation.ImageDetectEdgesPrewitt(image, width, height);
+            else if (radioButton3.Checked) image = ImageManipulation.ImageDetectEdgesSobel(image, width, height);
+            else if (radioButton4.Checked) image = ImageManipulation.ImageDetectEdgesIsotropic(image, width, height);
             image = ImageManipulation.ImageEqualizeHistogram(image, width, height);
             image = ImageManipulation.ImageWindowing(image, width, height, (int)numUpDownLowerBound.Value, (int)numUpDownUpperBound.Value);
             // Copy array to output Bitmap
