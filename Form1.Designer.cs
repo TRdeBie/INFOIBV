@@ -182,12 +182,10 @@
             // radioButton1
             // 
             this.radioButton1.AutoSize = true;
-            this.radioButton1.Checked = true;
             this.radioButton1.Location = new System.Drawing.Point(13, 69);
             this.radioButton1.Name = "radioButton1";
             this.radioButton1.Size = new System.Drawing.Size(110, 17);
             this.radioButton1.TabIndex = 11;
-            this.radioButton1.TabStop = true;
             this.radioButton1.Text = "3x3 approximation";
             this.radioButton1.UseVisualStyleBackColor = true;
             // 
@@ -204,10 +202,12 @@
             // radioButton3
             // 
             this.radioButton3.AutoSize = true;
+            this.radioButton3.Checked = true;
             this.radioButton3.Location = new System.Drawing.Point(12, 115);
             this.radioButton3.Name = "radioButton3";
             this.radioButton3.Size = new System.Drawing.Size(52, 17);
             this.radioButton3.TabIndex = 13;
+            this.radioButton3.TabStop = true;
             this.radioButton3.Text = "Sobel";
             this.radioButton3.UseVisualStyleBackColor = true;
             // 

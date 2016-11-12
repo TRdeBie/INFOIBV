@@ -284,54 +284,8 @@ namespace INFOIBV
         /// <returns></returns>
         public static Color[,] ImageDetectEdges(Color[,] image, int width, int height, double[,] k1, double[,] k2)
         {
-            double[,] newImage1 = new double[width, height];
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < height; y++)
-                {
-                    double sum = 0.0;
-                    int count = 0;
-                    for (int xk = -1; xk < 2; xk++)
-                    {
-                        if (x + xk >= 0 && x + xk < width)
-                        {
-                            for (int yk = -1; yk < 2; yk++)
-                            {
-                                if (y + yk >= 0 && y + yk < height)
-                                {
-                                    sum += image[x + xk, y + yk].R * k1[xk + 1, yk + 1];
-                                    count++;
-                                }
-                            }
-                        }
-                    }
-                    newImage1[x, y] = Math.Min(Math.Max((sum / count), 0), 255);
-                }
-            }
-            double[,] newImage2 = new double[width, height];
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < height; y++)
-                {
-                    double sum = 0.0;
-                    int count = 0;
-                    for (int xk = -1; xk < 2; xk++)
-                    {
-                        if (x + xk >= 0 && x + xk < width)
-                        {
-                            for (int yk = -1; yk < 2; yk++)
-                            {
-                                if (y + yk >= 0 && y + yk < height)
-                                {
-                                    sum += image[x + xk, y + yk].R * k2[xk + 1, yk + 1];
-                                    count++;
-                                }
-                            }
-                        }
-                    }
-                    newImage2[x, y] = Math.Min(Math.Max((sum / count), 0), 255);
-                }
-            }
+            double[,] newImage1 = ProcessingKernel(image, width, height, k1, 3, 3);
+            double[,] newImage2 = ProcessingKernel(image, width, height, k2, 3, 3);
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)
@@ -342,8 +296,48 @@ namespace INFOIBV
             }
             return image;
         }
-
-
+        /// <summary>
+        /// Attempt to detect lines via the four compass operators
+        /// </summary>
+        /// <param name="image"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <returns></returns>
+        public static Color[,] ImageDetectLines(Color[,] image, int width, int height) {
+            return image;
+        }
+        /// <summary>
+        /// Takes an image, and applies a kernel to it.
+        /// The result is a matrix of doubles, to save in operations and space
+        /// </summary>
+        /// <param name="image"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="kernel">Center of the kernel is assumed to be it's width and height / 2, rounded down</param>
+        /// <returns></returns>
+        public static double[,] ProcessingKernel(Color[,] image, int width, int height, double[,] kernel, int kWidth, int kHeight) {
+            int kernelCenterX = (int)Math.Floor(kWidth / 2.0);
+            int kernelCenterY = (int)Math.Floor(kHeight / 2.0);
+            double[,] newImage = new double[width, height];
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < height; y++) {
+                    double sum = 0.0;
+                    int count = 0;
+                    for (int xk = 0 - kernelCenterX; xk < kWidth - kernelCenterX; xk++) {
+                        if (x + xk >= 0 && x + xk < width) {
+                            for (int yk = 0 - kernelCenterY; yk < kHeight - kernelCenterY; yk++) {
+                                if (y + yk >= 0 && y + yk < height) {
+                                    sum += image[x + xk, y + yk].R * kernel[xk + 1, yk + 1];
+                                    count++;
+                                }
+                            }
+                        }
+                    }
+                    newImage[x, y] = Math.Min(Math.Max((sum / count), 0), 255);
+                }
+            }
+            return newImage;
+        }
         // Thresholding
         public static Color[,] ApplyThreshold(Color[,] Image, int width, int height, int thresholdValue)
         {
