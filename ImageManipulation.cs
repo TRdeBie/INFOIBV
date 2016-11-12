@@ -373,6 +373,75 @@ namespace INFOIBV
                 }
             }
             return newImage;
+        }/// <summary>
+        /// Calculates saddle points using derivatives
+        /// </summary>
+        /// <param name="image"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <returns></returns>
+        public static Color[,] ImageSaddlePoints(Color[,] image, int width, int height) {
+            double[,] imageDouble = new double[width, height];
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y<height; y++) {
+                    imageDouble[x, y] = image[x, y].R;
+                }
+            }
+            double[,] firstOrderHorizontal = ProcessingDerivativeHorizontal(imageDouble, width, height);
+            double[,] firstOrderVertical = ProcessingDerivativeVertical(imageDouble, width, height);
+            double[,] secondOrderHorizontal = ProcessingDerivativeHorizontal(firstOrderHorizontal, width, height);
+            double[,] secondOrderVertical = ProcessingDerivativeVertical(firstOrderVertical, width, height);
+            double[,] secondOrderCross = ProcessingDerivativeVertical(firstOrderHorizontal, width, height);
+            Color[,] stationaries = new Color[width, height];
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y<height; y++) {
+                    double hamiltonian = secondOrderHorizontal[x, y] * secondOrderVertical[x, y] - Math.Pow(secondOrderCross[x, y], 2);
+                    int newValue = (int)Math.Max(Math.Min(255 * hamiltonian + 255 / 2.0, 255), 0);
+                    stationaries[x, y] = Color.FromArgb(255, newValue, newValue, newValue);
+                }
+            }
+            return stationaries;
+        }
+        public static double[,] ProcessingDerivativeVertical(double[,] image, int width, int height) {
+            double[,] kernel = new double[1, 5] { { 1 / 12.0, -8 / 12.0, 0, 8 / 12.0, -1 / 12.0 } };
+            return ProcessingDerivative(image, width, height, kernel, 1, 5);
+        }
+        public static double[,] ProcessingDerivativeHorizontal(double[,] image, int width, int height) {
+            double[,] kernel = new double[5, 1] { { 1 / 12.0 }, { -8 / 12.0 }, { 0.0 }, { 8 / 12.0 }, { -1 / 12.0 } };
+            return ProcessingDerivative(image, width, height, kernel, 5, 1);
+        }
+        /// <summary>
+        /// General application for approximating a derivative over an image
+        /// </summary>
+        /// <param name="image"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="kernel"></param>
+        /// <param name="kWidth"></param>
+        /// <param name="kHeight"></param>
+        /// <returns></returns>
+        public static double[,] ProcessingDerivative(double[,] image, int width, int height, double[,] kernel, int kWidth, int kHeight) {
+            int kernelCenterX = (int)Math.Floor(kWidth / 2.0);
+            int kernelCenterY = (int)Math.Floor(kHeight / 2.0);
+            double[,] newImage = new double[width, height];
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < height; y++) {
+                    double sum = 0.0;
+                    int count = 0;
+                    for (int xk = 0 - kernelCenterX; xk < kWidth - kernelCenterX; xk++) {
+                        if (x + xk >= 0 && x + xk < width) {
+                            for (int yk = 0 - kernelCenterY; yk < kHeight - kernelCenterY; yk++) {
+                                if (y + yk >= 0 && y + yk < height) {
+                                    sum += image[x + xk, y + yk] * kernel[xk + kWidth / 2, yk + kHeight / 2];
+                                    count++;
+                                }
+                            }
+                        }
+                    }
+                    newImage[x, y] = sum / count;
+                }
+            }
+            return newImage;
         }
         // Thresholding
         public static Color[,] ApplyThreshold(Color[,] Image, int width, int height, int thresholdValue)
