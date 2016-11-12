@@ -46,6 +46,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConnectedComponentLabeling\ConnectedComponentLabeling.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ConnectedComponentLabeling\Label.cs" />
+    <Compile Include="ConnectedComponentLabeling\Object.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
