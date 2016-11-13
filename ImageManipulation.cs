@@ -9,7 +9,13 @@ namespace INFOIBV
     public static class ImageManipulation
     {
 
-
+        /// <summary>
+        /// Converts an image to greyscale
+        /// </summary>
+        /// <param name="image"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <returns></returns>
         public static Color[,] ImageToGreyscale(Color[,] image, int width, int height)
         {
             for (int x = 0; x < width; x++)
@@ -18,7 +24,6 @@ namespace INFOIBV
                 {
                     int bright = (int)(image[x, y].GetBrightness() * 255);
                     image[x, y] = Color.FromArgb(255, bright, bright, bright);
-                    //progressBar.PerformStep();
                 }
             }
             return image;
@@ -52,6 +57,17 @@ namespace INFOIBV
             }
             return image;
         }
+        /// <summary>
+        /// Samples each pixel. 
+        /// If it's above a certain threshold, it becomes white. 
+        /// Otherwise it becomes black.
+        /// </summary>
+        /// <param name="image"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="lowerBound"></param>
+        /// <param name="upperBound"></param>
+        /// <returns></returns>
         public static Color[,] ImageThresholding(Color[,] image, int width, int height, int lowerBound, int upperBound) {
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
@@ -65,7 +81,13 @@ namespace INFOIBV
             }
             return image;
         }
-
+        /// <summary>
+        /// Inverts the colours of an original image
+        /// </summary>
+        /// <param name="image"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <returns></returns>
         public static Color[,] ImageNegative(Color[,] image, int width, int height)
         {
             for (int x = 0; x < width; x++)
@@ -265,6 +287,14 @@ namespace INFOIBV
             }
             return Image1;
         }
+        /// <summary>
+        /// Create a kernel and perform first erosion and then dilation
+        /// </summary>
+        /// <param name="image"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="iterations"></param>
+        /// <returns></returns>
         public static Color[,] ImageOpening(Color[,] image, int width, int height, int iterations) {
             int[,] kernel = new int[3, 3] { { 0, 1, 0 }, { 1, 1, 1 }, { 0, 1, 0 } };
             for (int i = 0; i < iterations; i++)
@@ -273,6 +303,14 @@ namespace INFOIBV
                 image = ImageDilation(image, width, height, kernel, 3, 3);
             return image;
         }
+        /// <summary>
+        /// Create a kernel and perform first dilation and then erosion
+        /// </summary>
+        /// <param name="image"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="iterations"></param>
+        /// <returns></returns>
         public static Color[,] ImageClosing(Color[,] image, int width, int height, int iterations) {
             int[,] kernel = new int[3, 3] { { 0, 1, 0 }, { 1, 1, 1 }, { 0, 1, 0 } };
             for (int i = 0; i < iterations; i++)
@@ -370,17 +408,38 @@ namespace INFOIBV
             double[,] k2 = new double[,] { { -1.0, 0.0, 1.0 }, { -Math.Sqrt(2.0), 0.0, Math.Sqrt(2.0) }, { -1.0, 0.0, 1.0 } };
             return ImageDetectEdges(image, width, height, k1, k2);
         }
+        /// <summary>
+        /// Edge detection with Prewitt kernel
+        /// </summary>
+        /// <param name="image"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <returns></returns>
         public static Color[,] ImageDetectEdgesPrewitt(Color[,] image, int width, int height)
         {
             double[,] k1 = new double[,] { { -1.0, -1.0, -1.0 }, { 0.0, 0.0, 0.0 }, { 1.0, 1.0, 1.0 } };
             double[,] k2 = new double[,] { { -1.0, 0.0, 1.0 }, { -1.0, 0.0, 1.0 }, { -1.0, 0.0, 1.0 } };
             return ImageDetectEdges(image, width, height, k1, k2);
         }
+        /// <summary>
+        /// Edge detection with approximation kernel
+        /// </summary>
+        /// <param name="image"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <returns></returns>
         public static Color[,] ImageDetectEdgesApprox(Color[,] image, int width, int height) {
             double[,] k1 = new double[,] { { 0.0, -1.0, 0.0 }, { 0.0, 0.0, 0.0 }, { 0.0, 1.0, 0.0 } };
             double[,] k2 = new double[,] { { 0.0, 0.0, 0.0 }, { -1.0, 0.0, 1.0 }, { 0.0, 0.0, 0.0 } };
             return ImageDetectEdges(image, width, height, k1, k2);
         }
+        /// <summary>
+        /// Edge dtection with Sobel kernel
+        /// </summary>
+        /// <param name="image"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <returns></returns>
         public static Color[,] ImageDetectEdgesSobel(Color[,] image, int width, int height) {
             double[,] k1 = new double[,] { { -1.0, -2.0, -1.0 }, { 0.0, 0.0, 0.0 }, { 1.0, 2.0, 1.0 } };
             double[,] k2 = new double[,] { { -1.0, 0.0, 1.0 }, { -2.0, 0.0, 2.0 }, { -1.0, 0.0, 1.0 } };
@@ -494,10 +553,24 @@ namespace INFOIBV
             }
             return stationaries;
         }
+        /// <summary>
+        /// Passes a vertical derivative approximation kernel over an image
+        /// </summary>
+        /// <param name="image"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <returns></returns>
         public static double[,] ProcessingDerivativeVertical(double[,] image, int width, int height) {
             double[,] kernel = new double[1, 5] { { 1 / 12.0, -8 / 12.0, 0, 8 / 12.0, -1 / 12.0 } };
             return ProcessingDerivative(image, width, height, kernel, 1, 5);
         }
+        /// <summary>
+        /// Passes a horizontal derivative approximation kernel over an image
+        /// </summary>
+        /// <param name="image"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <returns></returns>
         public static double[,] ProcessingDerivativeHorizontal(double[,] image, int width, int height) {
             double[,] kernel = new double[5, 1] { { 1 / 12.0 }, { -8 / 12.0 }, { 0.0 }, { 8 / 12.0 }, { -1 / 12.0 } };
             return ProcessingDerivative(image, width, height, kernel, 5, 1);

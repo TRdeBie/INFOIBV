@@ -293,7 +293,6 @@ namespace INFOIBV
                 int b = (int)Math.Max(0, Math.Min(255, (s * 1)));
                 Color c = Color.Black;
                 int threshold = (int)((width * height) / 5630);
-                //threshold = 220;
                 if (b > threshold) {
                     c = Color.White;
                 }
