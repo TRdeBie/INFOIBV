@@ -223,6 +223,12 @@ namespace INFOIBV
                 objectList.Remove(o);
             }
             return image;
-        } 
+        }
+
+        public void RecalculateChords() {
+            foreach(Object o in objectList) {
+                o.RecalculateChord();
+            }
+        }
     }
 }
