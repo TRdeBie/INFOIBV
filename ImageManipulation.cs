@@ -265,6 +265,90 @@ namespace INFOIBV
             }
             return Image1;
         }
+        public static Color[,] ImageClosing(Color[,] image, int width, int height, int iterations) {
+            int[,] kernel = new int[3, 3] { { 0, 1, 0 }, { 1, 1, 1 }, { 0, 1, 0 } };
+            for (int i = 0; i < iterations; i++)
+                image = ImageDilation(image, width, height, kernel, 3, 3);
+            for (int i = 0; i < iterations; i++)
+                image = ImageErosion(image, width, height, kernel, 3, 3);
+            return image;
+        }
+        /// <summary>
+        /// Erosion means NOT deleting pixels if they fall within the kernel
+        /// </summary>
+        /// <param name="image"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="kernel"></param>
+        /// <param name="kwidth"></param>
+        /// <param name="kheight"></param>
+        /// <returns></returns>
+        public static Color[,] ImageErosion(Color[,] image, int width, int height, int[,] kernel, int kwidth, int kheight) {
+            Color[,] newImage = new Color[width, height];
+            int kernelCenterX = kwidth / 2;
+            int kernelCenterY = kheight / 2;
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < height; y++) {
+                    bool paint = true;
+                    for (int kx = -kernelCenterX; kx < -kernelCenterX + kwidth; kx++) {
+                        for (int ky = -kernelCenterY; ky < -kernelCenterY + kheight; ky++) {
+                            if (x + kx >= 0 && x + kx < width) {
+                                if (y + ky >= 0 && y + ky < height) {
+                                    if (kernel[kx+kernelCenterX,ky+kernelCenterY] > 0) {
+                                        if (!(image[x+kx,y+ky].R > 250)) {
+                                            paint = false;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    newImage[x, y] = Color.Black;
+                    if (paint) {
+                        newImage[x, y] = Color.White;
+                    }
+                }
+            }
+            return newImage;
+        }
+        /// <summary>
+        /// Dilations means adding pixels if there is even a little overlap
+        /// </summary>
+        /// <param name="image"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="kernel"></param>
+        /// <param name="kwidth"></param>
+        /// <param name="kheight"></param>
+        /// <returns></returns>
+        public static Color[,] ImageDilation(Color[,] image, int width, int height, int[,] kernel, int kwidth, int kheight) {
+            Color[,] newImage = new Color[width, height];
+            int kernelCenterX = kwidth / 2;
+            int kernelCenterY = kheight / 2;
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < height; y++) {
+                    bool paint = false;
+                    for (int kx = -kernelCenterX; kx < -kernelCenterX + kwidth; kx++) {
+                        for (int ky = -kernelCenterY; ky < -kernelCenterY + kheight; ky++) {
+                            if (x + kx >= 0 && x + kx < width) {
+                                if (y + ky >= 0 && y + ky < height) {
+                                    if (kernel[kx + kernelCenterX, ky + kernelCenterY] > 0) {
+                                        if ((image[x + kx, y + ky].R > 250)) {
+                                            paint = true;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    newImage[x, y] = Color.Black;
+                    if (paint) {
+                        newImage[x, y] = Color.White;
+                    }
+                }
+            }
+            return newImage;
+        }
         /// <summary>
         /// Edge detection with isotropic kernels
         /// </summary>

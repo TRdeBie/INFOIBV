@@ -81,6 +81,10 @@ namespace INFOIBV
             }
         }
 
+        public void RecalculateChord() {
+            GetLongestChord();
+        }
+
         private void GetLongestChord() {
             longestChordStart = new int[2];
             longestChordStop = new int[2];

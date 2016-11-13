@@ -79,6 +79,9 @@ namespace INFOIBV
             image = RemoveStraightObjects(image, width, height);
             //image = DrawObjectPerimeter(width, height);
             //image = ColorObjects(width, height);
+            image = ImageManipulation.ImageClosing(image, width, height, (int)numericUpDown1.Value);
+            DetectObjects(image, width, height);
+            RecalculateChords();
             image = DrawObjectLongestChords(image, width, height);
             int objects = objectList.Count();
 
