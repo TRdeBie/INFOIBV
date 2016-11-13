@@ -184,16 +184,15 @@ namespace INFOIBV
         public Color[,] DrawObjectLongestChords(Color[,] image, int width, int height) {
             foreach (Object o in objectList) {
                 //Point[] chord = o.LongestChordCoordinates;
-                int[] start = o.LongChordStartCoordinates;
-                int[] stop = o.LongChordStopCoordinates;
-                double xDiff = stop[0] - start[0];
-                double yDiff = stop[1] - start[1];
+                Point[] chord = o.LongChordCoordinates;
+                double xDiff = chord[1].X - chord[0].X;
+                double yDiff = chord[1].Y - chord[0].Y;
                 double length = Math.Sqrt(Math.Pow(xDiff, 2) + Math.Pow(yDiff, 2));
                 if (length > 0) {
                     double xDir = xDiff / length; //Normalized
                     double yDir = yDiff / length;
-                    double x = start[0];
-                    double y = start[1];
+                    double x = chord[0].X;
+                    double y = chord[0].Y;
                     image[(int)x, (int)y] = Color.White;
                     // Traverse the way from chord[0] to chord[1]
                     for (int i = 0; i < (int)Math.Ceiling(length); i++) {
@@ -246,6 +245,22 @@ namespace INFOIBV
             foreach (Object o in removables)
                 objectList.Remove(o);
 
+            return image;
+        }
+
+        public Color[,] ColorOnEccentricity(int width, int height) {
+            Color[,] image = new Color[width, height];
+            foreach(Object o in objectList) {
+                double e = o.Eccentricity;
+                double m = o.MinimalBoundingBox;
+                double s = o.Size;
+                int r = (int)Math.Max(0, Math.Min(255, (e * 10)));
+                int g = (int)Math.Max(0, Math.Min(255, (m * 10)));
+                int b = (int)Math.Max(0, Math.Min(255, (s * 1)));
+                foreach(Point pixel in o.pixels) {
+                    image[pixel.X, pixel.Y] = Color.FromArgb(255, r, g, b);
+                }
+            }
             return image;
         }
     }
