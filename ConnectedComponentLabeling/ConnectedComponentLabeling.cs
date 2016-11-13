@@ -266,12 +266,54 @@ namespace INFOIBV
                 double e = o.Eccentricity;
                 double m = o.MinimalBoundingBox;
                 double s = o.Size;
-                int r = (int)Math.Max(0, Math.Min(255, (e * 10)));
-                int g = (int)Math.Max(0, Math.Min(255, (m * 10)));
+                int r = (int)Math.Max(0, Math.Min(255, (e * 50)));
+                int g = (int)Math.Max(0, Math.Min(255, (m * 50)));
                 int b = (int)Math.Max(0, Math.Min(255, (s * 1)));
                 foreach(Point pixel in o.pixels) {
                     image[pixel.X, pixel.Y] = Color.FromArgb(255, r, g, b);
                 }
+            }
+            return image;
+        }
+
+        public Color[,] FilterOnEccentricity(int width, int height) {
+            Color[,] image = new Color[width, height];
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < height; y++) {
+                    image[x, y] = Color.Black;
+                }
+            }
+            List<Object> removables = new List<Object>();
+            foreach (Object o in objectList) {
+                double e = o.Eccentricity;
+                double m = o.MinimalBoundingBox;
+                double s = o.Size;
+                int r = (int)Math.Max(0, Math.Min(255, (e * 75)));
+                int g = (int)Math.Max(0, Math.Min(255, (m * 5)));
+                int b = (int)Math.Max(0, Math.Min(255, (s * 1)));
+                Color c = Color.Black;
+                int threshold = (int)((width * height) / 5630);
+                //threshold = 220;
+                if (b > threshold) {
+                    c = Color.White;
+                }
+                else {
+                    removables.Add(o);
+                }
+            }
+            foreach (Object o in removables) {
+                objectList.Remove(o);
+            }
+            // After removing the last bits from the objectlist, give every object remaining a different shade of grey
+            double value = 50;
+            double increment = (255 - value) / objectList.Count;
+            foreach(Object o in objectList) {
+                Color c = Color.FromArgb(255, (int)value, (int)value, (int)value);
+                foreach(Point pixel in o.pixels) {
+                    image[pixel.X, pixel.Y] = c;
+                }
+                value += increment;
+                value = Math.Min(255, value);
             }
             return image;
         }

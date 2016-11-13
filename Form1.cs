@@ -86,7 +86,8 @@ namespace INFOIBV
             DetectObjects(image, width, height);
             RecalculateChords();
             image = DrawObjectLongestChords(image, width, height);
-            image = ColorOnEccentricity(width, height);
+            //image = ColorOnEccentricity(width, height);
+            image = FilterOnEccentricity(width, height);
             int objects = objectList.Count();
 
             MessageBox.Show(objects + " airplanes have been detected.");
