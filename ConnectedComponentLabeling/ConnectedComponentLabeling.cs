@@ -130,5 +130,32 @@ namespace INFOIBV
 
             return image;
         }
+
+        public void CalculateCompactness() {
+
+        }
+
+        public Color[,] DrawObjectPerimeter(int width, int height) {
+            Color[,] image = new Color[width, height];
+            for(int x = 0; x < width; x++) {
+                for (int y = 0; y < height; y++) {
+                    image[x, y] = Color.Black;
+                }
+            }
+            foreach(Object o in objectList) {
+                int[,] perimeter = o.NeighbourGrid;
+                Point origin = o.origin;
+                int oWidth = o.gridWidth;
+                int oHeight = o.gridHeight;
+                for (int x = 0; x < oWidth; x++) {
+                    for (int y = 0; y < oHeight; y++) {
+                        if (perimeter[x,y] > 0) {
+                            image[origin.X + x, origin.Y + y] = Color.White;
+                        }
+                    }
+                }
+            }
+            return image;
+        }
     }
 }
