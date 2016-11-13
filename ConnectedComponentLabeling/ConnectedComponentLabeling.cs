@@ -93,6 +93,7 @@ namespace INFOIBV
         /// <param name="height"></param>
         /// <returns></returns>
         public Color[,] ColorObjects(int width, int height) {
+            Random r = new Random();
             Color[] options = new Color[7] { Color.Red, Color.Blue, Color.Green, Color.Yellow, Color.Purple, Color.Orange, Color.White };
             int counter = 0;
             Color[,] image = new Color[width, height];
@@ -102,7 +103,8 @@ namespace INFOIBV
                 }
             }
             foreach(Object o in objectList) {
-                Color c = options[counter % 7];
+                //Color c = options[counter % 7];
+                Color c = Color.FromArgb(255, r.Next(255), r.Next(255), r.Next(255));
                 foreach(Point pixel in o.pixels) {
                     image[pixel.X, pixel.Y] = c;
                 }
