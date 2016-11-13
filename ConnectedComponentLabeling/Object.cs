@@ -98,6 +98,8 @@ namespace INFOIBV
                         if (pixel2.X - pixel1.X != 0)
                             longestChordAngle = Math.Atan((pixel2.Y - pixel1.Y) / (pixel2.X - pixel1.X)) * (180 / Math.PI);
                         else longestChordAngle = 90;
+                        if (longestChordAngle < 0)
+                            longestChordAngle += 360;
                     }
                 }
             }

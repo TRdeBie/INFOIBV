@@ -174,23 +174,14 @@ namespace INFOIBV
             }
             return image;
         }
-
-        public Color[,] DrawObjectLongestChords(int width, int height) {
-            Color[,] image = new Color[width, height];
-            for (int x = 0; x < width; x++) {
-                for (int y = 0; y < height; y++) {
-                    image[x, y] = Color.Black;
-                }
-            }
-            /*
-            foreach (Object o in objectList) {
-                int[] start = o.LongChordStartCoordinates;
-                image[start[0], start[1]] = Color.White;
-                int[] stop = o.LongChordStopCoordinates;
-                image[stop[0], stop[1]] = Color.White;
-            }
-            */
-            
+        /// <summary>
+        /// Draws an overlay of the chords onto the image
+        /// </summary>
+        /// <param name="image"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <returns></returns>
+        public Color[,] DrawObjectLongestChords(Color[,] image, int width, int height) {
             foreach (Object o in objectList) {
                 //Point[] chord = o.LongestChordCoordinates;
                 int[] start = o.LongChordStartCoordinates;
@@ -208,12 +199,30 @@ namespace INFOIBV
                     for (int i = 0; i < (int)Math.Ceiling(length); i++) {
                         x += xDir;
                         y += yDir;
-                        image[(int)x, (int)y] = Color.White;
+                        image[(int)x, (int)y] = Color.Red;
                     }
                 }
             }
-            
             return image;
         }
+        public Color[,] RemoveLongestChords(Color[,] image, int width, int height) {
+            List<double> chordLengths = new List<double>();
+            foreach(Object o in objectList) {
+                chordLengths.Add(o.LongestChord);
+            }
+            double threshold = chordLengths.Average() * 2;
+            List<Object> removables = new List<Object>();
+            foreach(Object o in objectList) {
+                if (o.LongestChord > threshold) {
+                    foreach (Point pixel in o.pixels)
+                        image[pixel.X, pixel.Y] = Color.Black;
+                    removables.Add(o);
+                }
+            }
+            foreach(Object o in removables) {
+                objectList.Remove(o);
+            }
+            return image;
+        } 
     }
 }
