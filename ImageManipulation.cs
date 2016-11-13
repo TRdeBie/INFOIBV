@@ -311,7 +311,7 @@ namespace INFOIBV
             {
                 for (int y = 0; y < height; y++)
                 {
-                    int newValue = (int)Math.Sqrt(Math.Pow(newImage1[x, y], 2) + Math.Pow(newImage2[x, y], 2));
+                    int newValue = (int)Math.Min(Math.Max(Math.Sqrt(Math.Pow(newImage1[x, y], 2) + Math.Pow(newImage2[x, y], 2)), 0), 255);
                     image[x, y] = Color.FromArgb(255, newValue, newValue, newValue);
                 }
             }
