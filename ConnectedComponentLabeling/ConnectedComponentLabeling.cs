@@ -86,5 +86,23 @@ namespace INFOIBV
 
             return objectList.Count;
         }
+
+        public Color[,] RemoveNoiseBySize(Color[,] image, int width, int height)
+        {
+            List<Object> removables = new List<Object>();
+
+            foreach (Object singleObj in objectList)
+                if (singleObj.Size < 15)
+                {
+                    foreach (Point pixel in singleObj.pixels)
+                        image[pixel.X, pixel.Y] = Color.Black;
+                    removables.Add(singleObj);
+                }
+
+            foreach (Object toRemove in removables)
+                objectList.Remove(toRemove);
+
+            return image;
+        }
     }
 }

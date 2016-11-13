@@ -28,7 +28,5 @@ namespace INFOIBV
         {
             get { return pixels.Count; }
         }
-
-
     }
 }
