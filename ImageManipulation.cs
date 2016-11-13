@@ -265,6 +265,14 @@ namespace INFOIBV
             }
             return Image1;
         }
+        public static Color[,] ImageOpening(Color[,] image, int width, int height, int iterations) {
+            int[,] kernel = new int[3, 3] { { 0, 1, 0 }, { 1, 1, 1 }, { 0, 1, 0 } };
+            for (int i = 0; i < iterations; i++)
+                image = ImageErosion(image, width, height, kernel, 3, 3);
+            for (int i = 0; i < iterations; i++)
+                image = ImageDilation(image, width, height, kernel, 3, 3);
+            return image;
+        }
         public static Color[,] ImageClosing(Color[,] image, int width, int height, int iterations) {
             int[,] kernel = new int[3, 3] { { 0, 1, 0 }, { 1, 1, 1 }, { 0, 1, 0 } };
             for (int i = 0; i < iterations; i++)
