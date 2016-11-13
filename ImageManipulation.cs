@@ -535,7 +535,8 @@ namespace INFOIBV
             }
             return newImage;
         }
-        // Thresholding
+
+        // Method for thresholding
         public static Color[,] ApplyThreshold(Color[,] Image, int width, int height, int thresholdValue)
         {
             Color[,] newImage = new Color[width, height];
@@ -555,15 +556,17 @@ namespace INFOIBV
             return newImage;
         }
 
-        //Erosion
+        // Method to apply simple erosion
         public static Color[,] ApplyErosion(Color[,] Image, int width, int height)
         {
             Color[,] newImage = new Color[width, height];
             Color pixelValueAbove, pixelValueBelow, pixelValueLeft, pixelValueRight;
+            // Loop over every image
             for (int y = 0; y < height; y++)
             {
                 for (int x = 0; x < width; x++)
                 {
+                    // simple cross kernel for erosion
                     if (y - 1 >= 0)
                         pixelValueAbove = Image[x, y - 1];
                     else
@@ -581,6 +584,7 @@ namespace INFOIBV
                     else
                         pixelValueRight = Color.Purple;
 
+                    // Check pixels in cross around current pixel and check if one of them is black
                     if (pixelValueAbove == Color.Black || pixelValueBelow == Color.Black || pixelValueLeft == Color.Black || pixelValueRight == Color.Black)
                         newImage[x, y] = Color.Black;
                     else
@@ -590,16 +594,17 @@ namespace INFOIBV
             return newImage;
         }
 
-        //Dilation
+        // Method to apply simple dilation
         public static Color[,] ApplyDilation(Color[,] Image, int width, int height)
         {
             Color[,] newImage = new Color[width, height];
             Color pixelValueAbove, pixelValueBelow, pixelValueLeft, pixelValueRight;
+            // Loop over every pixel in the image
             for (int y = 0; y < height; y++)
             {
                 for (int x = 0; x < width; x++)
                 {
-                    // Set this pixel to black or white based on threshold
+                    // Simple cross kernel dilation
                     if (y - 1 >= 0)
                         pixelValueAbove = Image[x, y - 1];
                     else
@@ -617,6 +622,7 @@ namespace INFOIBV
                     else
                         pixelValueRight = Color.Purple;
 
+                    // Check pixels in cross around current pixel and check if one of them is white
                     if (pixelValueAbove == Color.White || pixelValueBelow == Color.White || pixelValueLeft == Color.White || pixelValueRight == Color.White)
                         newImage[x, y] = Color.White;
                     else

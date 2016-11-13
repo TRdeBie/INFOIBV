@@ -30,7 +30,7 @@ namespace INFOIBV
             pixels.Add(new Point(x, y));
         }
 
-        // Properties
+        // Methods to pass on information 
         public int Size {
             get { return pixels.Count; }
         }
@@ -102,18 +102,24 @@ namespace INFOIBV
             GetLongestPerpChord();
         }
 
+        // Method to get the longest chord of an object
         private void GetLongestChord() {
             longestChord = new Point[2];
             longestChordLength = 0;
             longestChordAngle = 0;
+            // Calculate the pixels in the perimeter if not done so already
             if (pixelsPerimeter == null) CalculateNeighbourGrid();
+            // Loop through all pixels in the perimeter, two times to get 2 points
             foreach (Point pixel1 in pixelsPerimeter) {
                 foreach(Point pixel2 in pixelsPerimeter) {
+                    // Calculate the distance between the points
                     double c = Math.Sqrt((pixel2.X - pixel1.X) ^ 2 + (pixel2.Y - pixel1.Y) ^ 2);
+                    // If it's longer than the previous longest chord, change all the properties of the longest chord to the current one
                     if (longestChordLength < c) {
                         longestChordLength = c;
                         longestChord[0] = new Point(pixel1.X + origin.X, pixel1.Y + origin.Y);
                         longestChord[1] = new Point(pixel2.X + origin.X, pixel2.Y + origin.Y);
+                        // Calculate angle to a horizontal line
                         if (pixel2.X - pixel1.X != 0)
                             longestChordAngle = Math.Atan((pixel2.Y - pixel1.Y) / (pixel2.X - pixel1.X)) * (180 / Math.PI);
                         else longestChordAngle = 90;
@@ -124,6 +130,7 @@ namespace INFOIBV
             }
         }
 
+        // Method to pass on the length of the longest perpendicular chord to the longest chord of the object
         public double LongestPerpChord
         {
             get
@@ -134,27 +141,33 @@ namespace INFOIBV
             }
         }
 
+        // Calculate the longest perpendicular chord to the longest chord
         public void GetLongestPerpChord()
         {
+            // Make sure not to divide by 0
             double lcs1 = longestChord[1].X - longestChord[0].X;
             double lcs2 = longestChord[1].Y - longestChord[0].Y;
             double longestChordSlope = 0;
             if (lcs2 != 0)
                 longestChordSlope = lcs1 / lcs2;
+            // Calculate the negativeReciprocal, which should be the slope for a perpendicular line
             double negativeReciprocal = Math.Ceiling(-1 * (1 / longestChordSlope));
-
+            
+            // Calculate the pixels in the perimeter if not done so already
             if (pixelsPerimeter == null) CalculateNeighbourGrid();
-            foreach (Point pixel1 in pixelsPerimeter)
-            {
-                foreach (Point pixel2 in pixelsPerimeter)
-                {
+            // Loop through all pixels in the perimeter, two times to get 2 points
+            foreach (Point pixel1 in pixelsPerimeter) { 
+                foreach (Point pixel2 in pixelsPerimeter) {
+                    // Prevent dividing by 0
                     double l1 = pixel2.X - pixel1.X;
                     double l2 = pixel2.Y - pixel1.Y;
                     double l = 0;
                     if (l2 != 0)
                         l = Math.Ceiling(l1 / l2);
+                    // Check if the calculated slope is equal to the negative reciprocal of the longest chord
                     if (l == negativeReciprocal)
                     {
+                        // Calculate the length and check if it's longer than the current longest prependicular chord
                         double c = Math.Sqrt((pixel2.X - pixel1.X) ^ 2 + (pixel2.Y - pixel1.Y) ^ 2);
                         if (longestPerpChord < c) {
                             longestPerpChord = c;

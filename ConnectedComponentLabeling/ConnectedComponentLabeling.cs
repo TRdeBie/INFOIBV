@@ -97,12 +97,14 @@ namespace INFOIBV
             Color[] options = new Color[7] { Color.Red, Color.Blue, Color.Green, Color.Yellow, Color.Purple, Color.Orange, Color.White };
             int counter = 0;
             Color[,] image = new Color[width, height];
+            // Make every pixel black, the background
             for (int x =0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
                     image[x, y] = Color.Black;
                 }
             }
-            foreach(Object o in objectList) {
+            // Assign a random color to every object detected
+            foreach (Object o in objectList) {
                 //Color c = options[counter % 7];
                 Color c = Color.FromArgb(255, r.Next(255), r.Next(255), r.Next(255));
                 foreach(Point pixel in o.pixels) {
@@ -116,24 +118,25 @@ namespace INFOIBV
         public Color[,] RemoveNoiseBySize(Color[,] image, int width, int height)
         {
             List<Object> removables = new List<Object>();
-
+            // For every object..
             foreach (Object singleObj in objectList)
+                // check if it's size is smaller than 15 pixels total
                 if (singleObj.Size < 15)
                 {
+                    // If so, make all the pixels of the object black
                     foreach (Point pixel in singleObj.pixels)
                         image[pixel.X, pixel.Y] = Color.Black;
+                    // And add the object to the removables list
                     removables.Add(singleObj);
                 }
 
+            // Remove every blacked out object from the object list
             foreach (Object toRemove in removables)
                 objectList.Remove(toRemove);
 
             return image;
         }
 
-        public void CalculateCompactness() {
-
-        }
 
         public Color[,] DrawObjectPerimeter(int width, int height) {
             Color[,] image = new Color[width, height];
@@ -205,26 +208,31 @@ namespace INFOIBV
             return image;
         }
 
+        // Remove objects with too long chords
         public Color[,] RemoveLongestChords(Color[,] image, int width, int height) {
             List<double> chordLengths = new List<double>();
             foreach(Object o in objectList) {
                 chordLengths.Add(o.LongestChord);
             }
+            // Set threshold of chord length to twice the average
             double threshold = chordLengths.Average() * 2;
             List<Object> removables = new List<Object>();
-            foreach(Object o in objectList) {
+            // Check for every object if their chord is too long and blacken them out if so
+            foreach (Object o in objectList) {
                 if (o.LongestChord > threshold) {
                     foreach (Point pixel in o.pixels)
                         image[pixel.X, pixel.Y] = Color.Black;
                     removables.Add(o);
                 }
             }
-            foreach(Object o in removables) {
+            // Remove the object with too long chords
+            foreach (Object o in removables) {
                 objectList.Remove(o);
             }
             return image;
         }
 
+        // Method to calculate the chords for all objects
         public void RecalculateChords()
         {
             foreach (Object o in objectList)
@@ -233,15 +241,19 @@ namespace INFOIBV
             }
         }
 
+        // Method to remove straight lines 
         public Color[,] RemoveStraightObjects(Color[,] image, int width, int height)
         {
             List<Object> removables = new List<Object>();
             foreach (Object o in objectList)
-                if (o.LongestPerpChord == -1) { 
+                // Check for every object of they do not have a perpendicular chord
+                if (o.LongestPerpChord == -1) {
+                    // If so, blacken their pixels
                     foreach (Point pixel in o.pixels)
                         image[pixel.X, pixel.Y] = Color.Black;
                     removables.Add(o);
                 }
+            // And remove them from the object list
             foreach (Object o in removables)
                 objectList.Remove(o);
 

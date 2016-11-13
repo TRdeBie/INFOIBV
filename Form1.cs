@@ -66,6 +66,7 @@ namespace INFOIBV
             image = ImageManipulation.ImageToGreyscale(image, width, height);
             //image = ImageManipulation.ImageSaddlePoints(image, width, height);
 
+            // Process image using the following selected methods
             if (radioButton1.Checked) image = ImageManipulation.ImageDetectEdgesApprox(image, width, height);
             else if (radioButton2.Checked) image = ImageManipulation.ImageDetectEdgesPrewitt(image, width, height);
             else if (radioButton3.Checked) image = ImageManipulation.ImageDetectEdgesSobel(image, width, height);
@@ -88,7 +89,7 @@ namespace INFOIBV
             image = ColorOnEccentricity(width, height);
             int objects = objectList.Count();
 
-            MessageBox.Show(objects + " objects have been detected.");
+            MessageBox.Show(objects + " airplanes have been detected.");
             // Copy array to output Bitmap
             for (int x = 0; x < InputImage.Size.Width; x++)
             {
