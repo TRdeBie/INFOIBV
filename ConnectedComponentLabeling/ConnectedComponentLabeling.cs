@@ -224,7 +224,15 @@ namespace INFOIBV
                 objectList.Remove(o);
             }
             return image;
-        } 
+        }
+
+        public void RecalculateChords()
+        {
+            foreach (Object o in objectList)
+            {
+                o.RecalculateChord();
+            }
+        }
 
         public Color[,] RemoveStraightObjects(Color[,] image, int width, int height)
         {
