@@ -254,11 +254,36 @@ namespace INFOIBV
                 double e = o.Eccentricity;
                 double m = o.MinimalBoundingBox;
                 double s = o.Size;
-                int r = (int)Math.Max(0, Math.Min(255, (e * 10)));
-                int g = (int)Math.Max(0, Math.Min(255, (m * 10)));
+                int r = (int)Math.Max(0, Math.Min(255, (e * 50)));
+                int g = (int)Math.Max(0, Math.Min(255, (m * 50)));
                 int b = (int)Math.Max(0, Math.Min(255, (s * 1)));
                 foreach(Point pixel in o.pixels) {
                     image[pixel.X, pixel.Y] = Color.FromArgb(255, r, g, b);
+                }
+            }
+            return image;
+        }
+
+        public Color[,] FilterOnEccentricity(int width, int height) {
+            Color[,] image = new Color[width, height];
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < height; y++) {
+                    image[x, y] = Color.Black;
+                }
+            }
+            foreach (Object o in objectList) {
+                double e = o.Eccentricity;
+                double m = o.MinimalBoundingBox;
+                double s = o.Size;
+                int r = (int)Math.Max(0, Math.Min(255, (e * 50)));
+                int g = (int)Math.Max(0, Math.Min(255, (m * 50)));
+                int b = (int)Math.Max(0, Math.Min(255, (s * 1)));
+                Color c = Color.Red;
+                if (b > 220) {
+                    c = Color.White;
+                }
+                foreach (Point pixel in o.pixels) {
+                    image[pixel.X, pixel.Y] = c;
                 }
             }
             return image;
