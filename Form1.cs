@@ -65,7 +65,7 @@ namespace INFOIBV
             int height = InputImage.Size.Height;
             image = ImageManipulation.ImageToGreyscale(image, width, height);
             //image = ImageManipulation.ImageSaddlePoints(image, width, height);
-            
+
             if (radioButton1.Checked) image = ImageManipulation.ImageDetectEdgesApprox(image, width, height);
             else if (radioButton2.Checked) image = ImageManipulation.ImageDetectEdgesPrewitt(image, width, height);
             else if (radioButton3.Checked) image = ImageManipulation.ImageDetectEdgesSobel(image, width, height);
@@ -73,9 +73,11 @@ namespace INFOIBV
             image = ImageManipulation.ImageEqualizeHistogram(image, width, height);
             image = ImageManipulation.ImageThresholding(image, width, height, (int)numUpDownLowerBound.Value, (int)numUpDownUpperBound.Value);
 
-            DetectObjects(image, width, height);
+            DetectObjects(image, width, height);           
             image = RemoveNoiseBySize(image, width, height);
+            image = ColorObjects(width, height);
             int objects = objectList.Count();
+
             MessageBox.Show(objects + " objects have been detected.");
             // Copy array to output Bitmap
             for (int x = 0; x < InputImage.Size.Width; x++)
@@ -85,7 +87,7 @@ namespace INFOIBV
                     OutputImage.SetPixel(x, y, image[x, y]);               // Set the pixel color at coordinate (x,y)
                 }
             }
-            
+
             pictureBox2.Image = (Image)OutputImage;                         // Display output image
             progressBar.Visible = false;                                    // Hide progress bar
         }
