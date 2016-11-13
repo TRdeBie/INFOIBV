@@ -78,6 +78,7 @@ namespace INFOIBV
             image = RemoveLongestChords(image, width, height);
             //image = DrawObjectPerimeter(width, height);
             //image = ColorObjects(width, height);
+            image = ImageManipulation.ImageClosing(image, width, height, (int)numericUpDown1.Value);
             image = DrawObjectLongestChords(image, width, height);
             int objects = objectList.Count();
 
