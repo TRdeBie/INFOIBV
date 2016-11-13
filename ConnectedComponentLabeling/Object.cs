@@ -178,28 +178,6 @@ namespace INFOIBV
                 }
             }
         }
-
-        public double CalculatePerimeter() {
-            if (grid == null) { CalculateGrid(); }
-            if (neighbourGrid == null) { CalculateNeighbourGrid(); }
-            int xInit, yInit;
-            bool lookingForStart = true;
-            for(int x = 0; x < gridWidth; x++) {
-                if (!lookingForStart) break;
-                for (int y = 0; y < gridHeight; y++) {
-                    if (!lookingForStart) break;
-                    if (grid[x, y] > 0) {
-                        xInit = x;
-                        yInit = y;
-                        lookingForStart = false;
-                    }
-                }
-            }
-            // iterate along the edge of the object, incrementing the length of the perimeter
-            double diagonal = Math.Sqrt(2);
-
-            return 1;
-        }
         /// <summary>
         /// Turn the grid into a grid where each value indicates the number of that pixel's neighbours
         /// </summary>

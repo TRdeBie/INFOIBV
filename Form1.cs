@@ -74,8 +74,9 @@ namespace INFOIBV
             image = ImageManipulation.ImageEqualizeHistogram(image, width, height);
             image = ImageManipulation.ImageThresholding(image, width, height, (int)numUpDownLowerBound.Value, (int)numUpDownUpperBound.Value);
 
-            DetectObjects(image, width, height);           
+            DetectObjects(image, width, height);
             image = RemoveNoiseBySize(image, width, height);
+            RecalculateChords();
             image = RemoveLongestChords(image, width, height);
             image = RemoveStraightObjects(image, width, height);
             //image = DrawObjectPerimeter(width, height);

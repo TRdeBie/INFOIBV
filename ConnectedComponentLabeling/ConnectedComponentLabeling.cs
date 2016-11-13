@@ -137,7 +137,12 @@ namespace INFOIBV
             return image;
         }
 
-
+        /// <summary>
+        /// For each object, only draw the pixels that have less than 4 neighbours
+        /// </summary>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <returns></returns>
         public Color[,] DrawObjectPerimeter(int width, int height) {
             Color[,] image = new Color[width, height];
             for(int x = 0; x < width; x++) {
@@ -160,7 +165,12 @@ namespace INFOIBV
             }
             return image;
         }
-
+        /// <summary>
+        /// A hasty attempt to visualize the longest chord angle
+        /// </summary>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <returns></returns>
         public Color[,] DrawObjectsFromChordAngle(int width, int height) {
             Color[,] image = new Color[width, height];
             for (int x = 0; x < width; x++) {
@@ -259,23 +269,14 @@ namespace INFOIBV
 
             return image;
         }
-
-        public Color[,] ColorOnEccentricity(int width, int height) {
-            Color[,] image = new Color[width, height];
-            foreach(Object o in objectList) {
-                double e = o.Eccentricity;
-                double m = o.MinimalBoundingBox;
-                double s = o.Size;
-                int r = (int)Math.Max(0, Math.Min(255, (e * 50)));
-                int g = (int)Math.Max(0, Math.Min(255, (m * 50)));
-                int b = (int)Math.Max(0, Math.Min(255, (s * 1)));
-                foreach(Point pixel in o.pixels) {
-                    image[pixel.X, pixel.Y] = Color.FromArgb(255, r, g, b);
-                }
-            }
-            return image;
-        }
-
+        /// <summary>
+        /// Final method
+        /// Goal is to find what kind of eccentricity, minimalboundingbox, and size planes tend to have
+        /// and filter other objects out.
+        /// </summary>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <returns></returns>
         public Color[,] FilterOnEccentricity(int width, int height) {
             Color[,] image = new Color[width, height];
             for (int x = 0; x < width; x++) {
@@ -292,6 +293,7 @@ namespace INFOIBV
                 int g = (int)Math.Max(0, Math.Min(255, (m * 5)));
                 int b = (int)Math.Max(0, Math.Min(255, (s * 1)));
                 Color c = Color.Black;
+                // More general case than '220', this works for multiple images with similar zoom levels
                 int threshold = (int)((width * height) / 5630);
                 if (b > threshold) {
                     c = Color.White;
