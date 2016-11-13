@@ -86,5 +86,29 @@ namespace INFOIBV
 
             return objectList.Count;
         }
+        /// <summary>
+        /// Using the objectlist, 
+        /// </summary>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <returns></returns>
+        public Color[,] ColorObjects(int width, int height) {
+            Color[] options = new Color[7] { Color.Red, Color.Blue, Color.Green, Color.Yellow, Color.Purple, Color.Orange, Color.White };
+            int counter = 0;
+            Color[,] image = new Color[width, height];
+            for (int x =0; x < width; x++) {
+                for (int y = 0; y < height; y++) {
+                    image[x, y] = Color.Black;
+                }
+            }
+            foreach(Object o in objectList) {
+                Color c = options[counter % 7];
+                foreach(Point pixel in o.pixels) {
+                    image[pixel.X, pixel.Y] = c;
+                }
+                counter++;
+            }
+            return image;
+        }
     }
 }
