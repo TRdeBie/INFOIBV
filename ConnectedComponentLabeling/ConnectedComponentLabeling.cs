@@ -157,5 +157,22 @@ namespace INFOIBV
             }
             return image;
         }
+
+        public Color[,] DrawObjectsFromChordAngle(int width, int height) {
+            Color[,] image = new Color[width, height];
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < height; y++) {
+                    image[x, y] = Color.Black;
+                }
+            }
+            foreach (Object o in objectList) {
+                int newValue = (int)(o.longestChordAngle);
+                Color c = Color.FromArgb(255, newValue, 255 - newValue, 0);
+                foreach (Point p in o.pixels) {
+                    image[p.X, p.Y] = c;
+                }
+            }
+            return image;
+        }
     }
 }

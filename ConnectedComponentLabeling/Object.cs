@@ -10,10 +10,12 @@ namespace INFOIBV
     {
         public int id;
         public List<Point> pixels = new List<Point>();
+        public List<Point> pixelsPerimeter;
         private int[,] grid; // all pixels put into a relative grid
         private int[,] neighbourGrid; // all pixels with < 4 neighbours
         public Point origin;
         public int gridWidth, gridHeight;
+        public double longestChord, longestChordAngle;
 
         // Constructor
         public Object(int id) {
@@ -44,6 +46,39 @@ namespace INFOIBV
             }
         }
 
+        public double LongestChord {
+            get {
+                if (longestChord == null || longestChord <= 0)
+                    GetLongestChord();
+                return longestChord;
+            }
+        }
+
+        public double LongestChordAngle {
+            get {
+                if (longestChordAngle == null)
+                    GetLongestChord();
+                return longestChordAngle;
+            }
+        }
+
+        private void GetLongestChord() {
+            longestChord = 0;
+            longestChordAngle = 0;
+            if (pixelsPerimeter == null) CalculateNeighbourGrid();
+            foreach (Point pixel1 in pixelsPerimeter) {
+                foreach(Point pixel2 in pixelsPerimeter) {
+                    double c = Math.Sqrt((pixel2.X - pixel1.X) ^ 2 + (pixel2.Y - pixel1.Y) ^ 2);
+                    if (longestChord < c) {
+                        longestChord = c;
+                        if (pixel2.X - pixel1.X != 0)
+                            longestChordAngle = Math.Atan((pixel2.Y - pixel1.Y) / (pixel2.X - pixel1.X)) * (180 / Math.PI);
+                        else longestChordAngle = 90;
+                    }
+                }
+            }
+        }
+
         public double CalculatePerimete() {
             if (grid == null) { CalculateGrid(); }
             if (neighbourGrid == null) { CalculateNeighbourGrid(); }
@@ -61,13 +96,15 @@ namespace INFOIBV
                 }
             }
             // iterate along the edge of the object, incrementing the length of the perimeter
-            
+            double diagonal = Math.Sqrt(2);
+
             return 1;
         }
         /// <summary>
         /// Turn the grid into a grid where each value indicates the number of that pixel's neighbours
         /// </summary>
         private void CalculateNeighbourGrid() {
+            pixelsPerimeter = new List<Point>();
             if (grid == null) CalculateGrid();
             neighbourGrid = new int[gridWidth, gridHeight];
             for (int x = 0; x < gridWidth; x++) {
@@ -87,8 +124,10 @@ namespace INFOIBV
                         if (y + 1 < gridHeight) {
                             if (grid[x, y + 1] > 0) neighbours++;
                         }
-                        if (neighbours > 0)
+                        if (neighbours > 0 && neighbours < 4) {
                             neighbourGrid[x, y] = 1;
+                            pixelsPerimeter.Add(new Point(x, y));
+                        }
                     }
                 }
             }
