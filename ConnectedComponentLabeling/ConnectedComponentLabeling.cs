@@ -32,8 +32,8 @@ namespace INFOIBV
                         List<int> neighbourLabels = new List<int>();
 
                         // Find all labelled neighbours in range
-                        for (int i = x - 1; i <= x + 2 && i < width; i++)
-                            for (int j = y - 1; j <= y + 2 && j < height; j++)
+                        for (int i = x - 1; i < x + 2 && i < width; i++)
+                            for (int j = y - 1; j < y + 2 && j < height; j++)
                                 if (i > -1 && j > -1 && pixelLabels[i, j] != 0)
                                     neighbourLabels.Add(pixelLabels[i, j]);
 
@@ -205,6 +205,7 @@ namespace INFOIBV
             }
             return image;
         }
+
         public Color[,] RemoveLongestChords(Color[,] image, int width, int height) {
             List<double> chordLengths = new List<double>();
             foreach(Object o in objectList) {
@@ -224,5 +225,20 @@ namespace INFOIBV
             }
             return image;
         } 
+
+        public Color[,] RemoveStraightObjects(Color[,] image, int width, int height)
+        {
+            List<Object> removables = new List<Object>();
+            foreach (Object o in objectList)
+                if (o.LongestPerpChord == -1) { 
+                    foreach (Point pixel in o.pixels)
+                        image[pixel.X, pixel.Y] = Color.Black;
+                    removables.Add(o);
+                }
+            foreach (Object o in removables)
+                objectList.Remove(o);
+
+            return image;
+        }
     }
 }

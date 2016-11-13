@@ -76,6 +76,7 @@ namespace INFOIBV
             DetectObjects(image, width, height);           
             image = RemoveNoiseBySize(image, width, height);
             image = RemoveLongestChords(image, width, height);
+            image = RemoveStraightObjects(image, width, height);
             //image = DrawObjectPerimeter(width, height);
             //image = ColorObjects(width, height);
             image = DrawObjectLongestChords(image, width, height);

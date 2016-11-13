@@ -158,7 +158,7 @@ namespace INFOIBV
             {
                 for (int y = 0; y < height; y++)
                 {
-                    int newValue = remapping[image[x, y].R];
+                    int newValue = Math.Max(0, Math.Min(255, remapping[image[x, y].R]));
                     image[x, y] = Color.FromArgb(255, newValue, newValue, newValue);
                 }
             }

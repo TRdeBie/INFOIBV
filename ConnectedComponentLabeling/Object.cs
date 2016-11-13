@@ -18,6 +18,7 @@ namespace INFOIBV
         private double longestChord, longestChordAngle;
         private int[] longestChordStart;
         private int[] longestChordStop;
+        private double longestPerpChord = -1;
 
         // Constructor
         public Object(int id) {
@@ -101,6 +102,45 @@ namespace INFOIBV
                         if (longestChordAngle < 0)
                             longestChordAngle += 360;
                     }
+                }
+            }
+        }
+
+        public double LongestPerpChord
+        {
+            get
+            {
+                if (longestPerpChord == -1)
+                    GetLongestPerpChord();
+                return longestPerpChord;
+            }
+        }
+
+        public void GetLongestPerpChord()
+        {
+            double lcs1 = longestChordStop[0] - longestChordStart[0];
+            double lcs2 = longestChordStop[1] - longestChordStart[1];
+            double longestChordSlope = 0;
+            if (lcs2 != 0)
+                longestChordSlope = lcs1 / lcs2;
+            double negativeReciprocal = Math.Ceiling(-1 * (1 / longestChordSlope));
+
+            if (pixelsPerimeter == null) CalculateNeighbourGrid();
+            foreach (Point pixel1 in pixelsPerimeter)
+            {
+                foreach (Point pixel2 in pixelsPerimeter)
+                {
+                    double l1 = pixel2.X - pixel1.X;
+                    double l2 = pixel2.Y - pixel1.Y;
+                    double l = 0;
+                    if (l2 != 0)
+                        l = Math.Ceiling(l1 / l2);
+                    if (l == negativeReciprocal)
+                    {
+                        double c = Math.Sqrt((pixel2.X - pixel1.X) ^ 2 + (pixel2.Y - pixel1.Y) ^ 2);
+                        if (longestPerpChord < c)
+                            longestPerpChord = c;
+                    }                      
                 }
             }
         }
