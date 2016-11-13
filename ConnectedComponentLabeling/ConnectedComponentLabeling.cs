@@ -166,12 +166,53 @@ namespace INFOIBV
                 }
             }
             foreach (Object o in objectList) {
-                int newValue = (int)(o.longestChordAngle);
+                int newValue = (int)Math.Max(0, Math.Min(255, o.LongestChordAngle));
                 Color c = Color.FromArgb(255, newValue, 255 - newValue, 0);
                 foreach (Point p in o.pixels) {
                     image[p.X, p.Y] = c;
                 }
             }
+            return image;
+        }
+
+        public Color[,] DrawObjectLongestChords(int width, int height) {
+            Color[,] image = new Color[width, height];
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < height; y++) {
+                    image[x, y] = Color.Black;
+                }
+            }
+            /*
+            foreach (Object o in objectList) {
+                int[] start = o.LongChordStartCoordinates;
+                image[start[0], start[1]] = Color.White;
+                int[] stop = o.LongChordStopCoordinates;
+                image[stop[0], stop[1]] = Color.White;
+            }
+            */
+            
+            foreach (Object o in objectList) {
+                //Point[] chord = o.LongestChordCoordinates;
+                int[] start = o.LongChordStartCoordinates;
+                int[] stop = o.LongChordStopCoordinates;
+                double xDiff = stop[0] - start[0];
+                double yDiff = stop[1] - start[1];
+                double length = Math.Sqrt(Math.Pow(xDiff, 2) + Math.Pow(yDiff, 2));
+                if (length > 0) {
+                    double xDir = xDiff / length; //Normalized
+                    double yDir = yDiff / length;
+                    double x = start[0];
+                    double y = start[1];
+                    image[(int)x, (int)y] = Color.White;
+                    // Traverse the way from chord[0] to chord[1]
+                    for (int i = 0; i < (int)Math.Ceiling(length); i++) {
+                        x += xDir;
+                        y += yDir;
+                        image[(int)x, (int)y] = Color.White;
+                    }
+                }
+            }
+            
             return image;
         }
     }

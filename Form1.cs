@@ -77,7 +77,8 @@ namespace INFOIBV
             image = RemoveNoiseBySize(image, width, height);
             //image = DrawObjectPerimeter(width, height);
             //image = ColorObjects(width, height);
-            image = DrawObjectsFromChordAngle(width, height);
+            image = DrawObjectLongestChords(width, height);
+            //image = DrawObjectsFromChordAngle(width, height);
             int objects = objectList.Count();
 
             MessageBox.Show(objects + " objects have been detected.");

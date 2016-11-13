@@ -15,7 +15,9 @@ namespace INFOIBV
         private int[,] neighbourGrid; // all pixels with < 4 neighbours
         public Point origin;
         public int gridWidth, gridHeight;
-        public double longestChord, longestChordAngle;
+        private double longestChord, longestChordAngle;
+        private int[] longestChordStart;
+        private int[] longestChordStop;
 
         // Constructor
         public Object(int id) {
@@ -48,7 +50,7 @@ namespace INFOIBV
 
         public double LongestChord {
             get {
-                if (longestChord == null || longestChord <= 0)
+                if (longestChord <= 0)
                     GetLongestChord();
                 return longestChord;
             }
@@ -56,13 +58,31 @@ namespace INFOIBV
 
         public double LongestChordAngle {
             get {
-                if (longestChordAngle == null)
+                if (longestChordAngle <= 0)
                     GetLongestChord();
                 return longestChordAngle;
             }
         }
 
+        public int[] LongChordStartCoordinates {
+            get {
+                if (longestChordStart == null)
+                    GetLongestChord();
+                return longestChordStart;
+            }
+        }
+
+        public int[] LongChordStopCoordinates {
+            get {
+                if (longestChordStop == null)
+                    GetLongestChord();
+                return longestChordStop;
+            }
+        }
+
         private void GetLongestChord() {
+            longestChordStart = new int[2];
+            longestChordStop = new int[2];
             longestChord = 0;
             longestChordAngle = 0;
             if (pixelsPerimeter == null) CalculateNeighbourGrid();
@@ -71,6 +91,10 @@ namespace INFOIBV
                     double c = Math.Sqrt((pixel2.X - pixel1.X) ^ 2 + (pixel2.Y - pixel1.Y) ^ 2);
                     if (longestChord < c) {
                         longestChord = c;
+                        longestChordStart[0] = pixel1.X + origin.X;
+                        longestChordStart[1] = pixel1.Y + origin.Y;
+                        longestChordStop[0] = pixel2.X + origin.X;
+                        longestChordStop[1] = pixel2.Y + origin.Y;
                         if (pixel2.X - pixel1.X != 0)
                             longestChordAngle = Math.Atan((pixel2.Y - pixel1.Y) / (pixel2.X - pixel1.X)) * (180 / Math.PI);
                         else longestChordAngle = 90;
@@ -79,7 +103,7 @@ namespace INFOIBV
             }
         }
 
-        public double CalculatePerimete() {
+        public double CalculatePerimeter() {
             if (grid == null) { CalculateGrid(); }
             if (neighbourGrid == null) { CalculateNeighbourGrid(); }
             int xInit, yInit;
